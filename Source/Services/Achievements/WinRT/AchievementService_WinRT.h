@@ -31,7 +31,7 @@ public:
     /// </remarks>
     Windows::Foundation::IAsyncAction^ UpdateAchievementAsync(
         _In_ Platform::String^ xboxUserId,
-        _In_ Platform::String^ achievementId,
+        _In_ uint32 achievementId,
         _In_ uint32 percentComplete
         );
 
@@ -56,7 +56,7 @@ public:
         _In_ Platform::String^ xboxUserId,
         _In_ uint32 titleId,
         _In_ Platform::String^ serviceConfigurationId,
-        _In_ Platform::String^ achievementId,
+        _In_ uint32 achievementId,
         _In_ uint32 percentComplete
         );
 
@@ -113,7 +113,7 @@ public:
     Windows::Foundation::IAsyncOperation<Achievement^>^ GetAchievementAsync(
         _In_ Platform::String^ xboxUserId,
         _In_ Platform::String^ serviceConfigurationId,
-        _In_ Platform::String^ achievementId
+        _In_ uint32 achievementId
         );
 
 internal:

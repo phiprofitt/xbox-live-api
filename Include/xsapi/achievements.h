@@ -634,7 +634,7 @@ public:
     /// </remarks>
     _XSAPIIMP pplx::task<xbox::services::xbox_live_result<void>> update_achievement(
         _In_ const string_t& xboxUserId,
-        _In_ const string_t& achievementId,
+        _In_ const uint32_t& achievementId,
         _In_ uint32_t percentComplete
         );
 
@@ -659,7 +659,7 @@ public:
         _In_ const string_t& xboxUserId,
         _In_ uint32_t titleId,
         _In_ const string_t& serviceConfigurationId,
-        _In_ const string_t& achievementId,
+        _In_ const uint32_t& achievementId,
         _In_ uint32_t percentComplete
         );
 
@@ -709,7 +709,7 @@ public:
     _XSAPIIMP pplx::task<xbox::services::xbox_live_result<achievement>> get_achievement(
         _In_ const string_t& xboxUserId,
         _In_ const string_t& serviceConfigurationId,
-        _In_ const string_t& achievementId
+        _In_ const uint32_t& achievementId
         );
 
     achievement_service() {};
@@ -753,7 +753,7 @@ private:
     static const string_t achievement_by_id_sub_path(
         _In_ const string_t& xboxUserId,
         _In_ const string_t& serviceConfigurationId,
-        _In_ const string_t& achievementId
+        _In_ const uint32_t& achievementId
         );
 
     static xbox_live_result<string_t> convert_type_to_string(
@@ -772,20 +772,20 @@ private:
 #if TV_API
     static xbox::services::xbox_live_result<void> write_offline_update_achievement(
         _In_ std::shared_ptr<xbox::services::xbox_live_context_impl> xboxLiveContextImpl,
-        _In_ const string_t& achievementId,
+        _In_ const uint32_t& achievementId,
         _In_ uint32_t percentComplete
         );
 
     static ULONG event_write_achievement_update(
         _In_ PCWSTR userId,
-        _In_ PCWSTR achievementId,
+        _In_ const uint32_t achievementId,
         _In_ const uint32_t percentComplete
         );
 
 #elif UWP_API
     static xbox::services::xbox_live_result<void> write_offline_update_achievement(
         _In_ std::shared_ptr<xbox::services::xbox_live_context_impl> xboxLiveContextImpl,
-        _In_ const string_t& achievementId,
+        _In_ const uint32_t& achievementId,
         _In_ uint32_t percentComplete
         );
 #endif
