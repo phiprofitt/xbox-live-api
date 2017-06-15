@@ -85,7 +85,7 @@ achievement_service::achievement_service(
 pplx::task<xbox::services::xbox_live_result<void>> 
 achievement_service::update_achievement(
     _In_ const string_t& xboxUserId,
-    _In_ const string_t& achievementId,
+    _In_ uint32_t achievementId,
     _In_ uint32_t percentComplete
     )
 {
@@ -101,16 +101,16 @@ achievement_service::update_achievement(
     _In_ const string_t& xboxUserId,
     _In_ uint32_t titleId,
     _In_ const string_t& serviceConfigurationId,
-    _In_ const string_t& achievementId,
+    _In_ uint32_t achievementId,
     _In_ uint32_t percentComplete
     )
 {
     RETURN_TASK_CPP_INVALIDARGUMENT_IF(xboxUserId.empty(), void, "xbox user id is empty");
     RETURN_TASK_CPP_INVALIDARGUMENT_IF(serviceConfigurationId.empty(), void, "serviceConfigurationId is empty");
-    RETURN_TASK_CPP_INVALIDARGUMENT_IF(achievementId.empty(), void, "achievementId is empty");
+    RETURN_TASK_CPP_INVALIDARGUMENT_IF(achievementId < 0, void, "achievementId is empty");
     RETURN_TASK_CPP_INVALIDARGUMENT_IF(percentComplete > 100, void, "percentComplete is greater than 100");
 
-#if TV_API
+#if TV_API //fix
     {
         auto xsapiSingleton = get_xsapi_singleton();
         std::lock_guard<std::mutex> lock(xsapiSingleton->m_achievementServiceInitLock);
@@ -163,8 +163,10 @@ achievement_service::update_achievement(
         );
     httpCall->set_xbox_contract_version_header_value(_T("2"));
 
+	string_t achievementIdStr = utils::uint32_to_string_t(achievementId); //convert to string here
+
     web::json::value achievementJson;
-    achievementJson[_T("id")] = web::json::value::string(achievementId);
+    achievementJson[_T("id")] = web::json::value::string(achievementIdStr);
     achievementJson[_T("percentComplete")] = web::json::value::number(static_cast<double>(percentComplete));
 
     web::json::value achievementsJson = web::json::value::array();
@@ -250,7 +252,7 @@ achievement_service::event_write_achievement_update(
 xbox::services::xbox_live_result<void>
 achievement_service::write_offline_update_achievement(
     _In_ std::shared_ptr<xbox::services::xbox_live_context_impl> xboxLiveContextImpl,
-    _In_ const string_t& achievementId,
+    _In_ uint32_t achievementId,
     _In_ uint32_t percentComplete
     )
 {
@@ -269,12 +271,13 @@ achievement_service::write_offline_update_achievement(
 xbox::services::xbox_live_result<void>
 achievement_service::write_offline_update_achievement(
     _In_ std::shared_ptr<xbox::services::xbox_live_context_impl> xboxLiveContextImpl,
-    _In_ const string_t& achievementId,
+    _In_ uint32_t achievementId,
     _In_ uint32_t percentComplete
     )
 {
+	string_t achievementIdStr = utils::uint32_to_string_t(achievementId); //convert to string
     web::json::value properties = web::json::value::object();
-    properties[_T("AchievementId")] = web::json::value(achievementId);
+    properties[_T("AchievementId")] = web::json::value(achievementIdStr);
     properties[_T("PercentComplete")] = percentComplete;
     web::json::value measurements = web::json::value::object();
     return xboxLiveContextImpl->events_service().write_in_game_event(_T("AchievementUpdate"), properties, measurements);
@@ -313,12 +316,12 @@ pplx::task<xbox::services::xbox_live_result<achievement>>
 achievement_service::get_achievement(
     _In_ const string_t& xboxUserId,
     _In_ const string_t& serviceConfigurationId,
-    _In_ const string_t& achievementId
+    _In_ uint32_t achievementId
     )
 {
     RETURN_TASK_CPP_INVALIDARGUMENT_IF(xboxUserId.empty(), achievement, "xbox user id is empty");
     RETURN_TASK_CPP_INVALIDARGUMENT_IF(serviceConfigurationId.empty(), achievement, "service configuration id is empty");
-    RETURN_TASK_CPP_INVALIDARGUMENT_IF(achievementId.empty(), achievement, "achievement id is empty");
+    RETURN_TASK_CPP_INVALIDARGUMENT_IF(achievementId < 0, achievement, "achievement id is empty");
 
     auto subPath = achievement_by_id_sub_path(
         xboxUserId,
@@ -562,7 +565,7 @@ const string_t
 achievement_service::achievement_by_id_sub_path(
     _In_ const string_t& xboxUserId,
     _In_ const string_t& serviceConfigurationId,
-    _In_ const string_t& achievementId
+    _In_ const uint32_t achievementId
     )
 {
     stringstream_t ss;
