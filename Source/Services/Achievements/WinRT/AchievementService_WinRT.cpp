@@ -25,13 +25,13 @@ AchievementService::AchievementService(
 Windows::Foundation::IAsyncAction^ 
 AchievementService::UpdateAchievementAsync(
     _In_ Platform::String^ xboxUserId,
-    _In_ uint32 achievementId,
+    _In_ Platform::String^ achievementId,
     _In_ uint32 percentComplete
     )
 {
     auto task = m_cppObj.update_achievement(
         STRING_T_FROM_PLATFORM_STRING(xboxUserId),
-        achievementId,
+        STRING_T_FROM_PLATFORM_STRING(achievementId),
         percentComplete)
     .then([](xbox_live_result<void> cppResult)
     {
@@ -46,7 +46,7 @@ AchievementService::UpdateAchievementAsync(
     _In_ Platform::String^ xboxUserId,
     _In_ uint32 titleId,
     _In_ Platform::String^ serviceConfigurationId,
-    _In_ uint32 achievementId,
+    _In_ Platform::String^ achievementId,
     _In_ uint32 percentComplete
     )
 {
@@ -54,7 +54,7 @@ AchievementService::UpdateAchievementAsync(
         STRING_T_FROM_PLATFORM_STRING(xboxUserId),
         titleId,
         STRING_T_FROM_PLATFORM_STRING(serviceConfigurationId),
-        achievementId,
+        STRING_T_FROM_PLATFORM_STRING(achievementId),
         percentComplete)
     .then([](xbox_live_result<void> cppResult)
     {
@@ -96,13 +96,13 @@ IAsyncOperation<Achievement^>^
 AchievementService::GetAchievementAsync(
     _In_ Platform::String^ xboxUserId,
     _In_ Platform::String^ serviceConfigurationId,
-    _In_ uint32 achievementId
+    _In_ Platform::String^ achievementId
     )
 {
     auto task = m_cppObj.get_achievement(
         STRING_T_FROM_PLATFORM_STRING(xboxUserId),
         STRING_T_FROM_PLATFORM_STRING(serviceConfigurationId),
-        achievementId)
+        STRING_T_FROM_PLATFORM_STRING(achievementId))
     .then([](xbox_live_result<achievement> cppResult)
     {
         THROW_IF_ERR(cppResult);
